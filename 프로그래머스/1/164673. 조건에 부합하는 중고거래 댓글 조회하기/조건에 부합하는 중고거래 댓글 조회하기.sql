@@ -1,8 +1,5 @@
 -- 코드를 입력하세요
-
-
-SELECT a.title, a.board_id, b.reply_id, b.writer_id, b.contents, DATE_FORMAT(b.CREATED_DATE,'%Y-%m-%d') as created_date
-  from used_goods_board a, used_goods_reply b
-  where a.board_id = b.board_id and
-              a.CREATED_DATE LIKE '2022-10%'
-  order by b.created_date, a.title asc;
+SELECT BOARD.TITLE, BOARD.BOARD_ID, REPLY.REPLY_ID, REPLY.WRITER_ID, REPLY.CONTENTS, DATE_FORMAT(REPLY.CREATED_DATE,'%Y-%m-%d')
+FROM USED_GOODS_BOARD BOARD, USED_GOODS_REPLY REPLY
+WHERE BOARD.BOARD_ID = REPLY.BOARD_ID AND BOARD.CREATED_DATE LIKE '2022-10%'
+ORDER BY REPLY.CREATED_DATE, BOARD.TITLE ASC
