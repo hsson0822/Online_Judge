@@ -9,7 +9,7 @@ int main()
 	cin.tie(NULL);
 	cout.tie(NULL);
 
-	int count;
+	long long count;
 	cin >> count;
 
 	deque<int> leng;
@@ -17,22 +17,22 @@ int main()
 
 	for (int i = 0; i < count - 1; ++i)
 	{
-		int n;
+		long long n;
 		cin >> n;
 		leng.push_back(n);
 	}
 
 	for (int i = 0; i < count; ++i)
 	{
-		int n;
+		long long n;
 		cin >> n;
 		city.push_back(n);
 	}
 
-	int now = city[0];
-	int money = now * leng[0];
+	long long now = city[0];
+	long long money = now * leng[0];
 
-	for (int i = 1; i < count-1; ++i)
+	for (long long i = 1; i < count-1; ++i)
 	{
 		if (now < city[i])
 			money += now * leng[i];
