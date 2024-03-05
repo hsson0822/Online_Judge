@@ -35,7 +35,7 @@ int main()
 
 		bool flag = true;
 		bool error = false;
-		int RCnt{};
+
 		for (int i = 0; i < str.size(); ++i)
 		{
 			
@@ -46,8 +46,6 @@ int main()
 					flag = false;
 				else
 					flag = true;
-
-				++RCnt;
 			}
 			else if (str[i] == 'D')
 			{
@@ -65,7 +63,7 @@ int main()
 
 		if (!error)
 		{
-			if (RCnt % 2 == 1)
+			if (!flag)
 				reverse(deq.begin(), deq.end());
 
 			int k = deq.size();
