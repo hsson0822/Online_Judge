@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <algorithm>
 using namespace std;
 
 int K;
@@ -13,14 +13,7 @@ void postOrder(int root, int size)
 	int frontRoot = root + 1;
 	int backRoot = size;
 
-	for (int i = root + 1; i < size; ++i)
-	{
-		if (tree[i] > tree[root])
-		{
-			backRoot = i;
-			break;
-		}
-	}
+	backRoot = distance(tree, upper_bound(tree + root, tree + size, tree[root]));
 
 	postOrder(frontRoot, backRoot);
 	postOrder(backRoot, size);
