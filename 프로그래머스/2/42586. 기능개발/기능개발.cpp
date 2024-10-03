@@ -1,59 +1,43 @@
 #include <string>
 #include <vector>
 #include <queue>
-#include <iostream>
 
 using namespace std;
 
 vector<int> solution(vector<int> progresses, vector<int> speeds) {
     vector<int> answer;
+    queue<pair<int,int>> Q;
+    for(int i  = 0 ; i < progresses.size(); ++i)
+        Q.push(pair(progresses[i], speeds[i]));
     
-    queue<pair<int, int>> que;
-    
-    for(int i = 0 ; i < progresses.size() ; ++i)
-        que.push(make_pair(progresses[i],speeds[i]));
-    
-    while(true)
+    while(!Q.empty())
     {
-        for(int i = 0 ; i < que.size() ; ++i)
-        {
-            pair<int,int> p;
-
-            p = que.front();
-            p.first += p.second;
-
-            //cout << p.first << " " << p.second << endl;
-
-            que.pop();
-            que.push(p);
-        }
+        queue<pair<int,int>> temp;
         
-        int count{};
-        for(int i = 0 ; i < que.size() ; ++i)
+        while(!Q.empty())
         {
-            pair<int,int> p;
-
-            p = que.front();
+            pair<int,int> t = Q.front();
+            Q.pop();
+            t.first +=t.second;
             
-            if(p.first >= 100)
-            {
-                ++count;
-                que.pop();
-                --i;
-            }
-            else
-                break;
+            temp.push(t);
         }
         
-        if(count != 0)
-            answer.push_back(count);
+        while(!temp.empty())
+        {
+            Q.push(temp.front());
+            temp.pop();
+        }
         
-        if(que.size() == 0)
-            break;
+        int n{};
+        while(!Q.empty() && Q.front().first >= 100)
+        {
+            ++n;
+            Q.pop();
+        }
         
+        if(n !=0)
+            answer.push_back(n);
     }
-        
-    
-    
     return answer;
 }
