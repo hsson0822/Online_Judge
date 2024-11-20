@@ -2,30 +2,24 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
-#include <sstream>
 
 using namespace std;
 
 string solution(string s) {
-    string answer = "";
-    vector<string> words;
-
+    
+    transform(s.begin(), s.end(), s.begin(), ::tolower);
+    
     for(int i = 0 ; i < s.size() ; ++i)
     {
-        if(i == 0 && isalpha(s[0]))
+        if(i == 0 && isalpha(s[i]))
         {
-            s[0] = toupper(s[0]);
-            continue;
+            s[i] = toupper(s[i]);
         }
-        
-        if(s[i] == ' ' &&  isalpha(s[i+1]))
+        else if( s[i-1] == ' ' && isalpha(s[i]))
         {
-           s[i+1] = toupper(s[i+1]);
-           i+=1; 
+            s[i] = toupper(s[i]);
         }
-        else
-            s[i] = tolower(s[i]);
-          
+            
     }
     
     return s;
