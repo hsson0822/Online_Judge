@@ -9,7 +9,6 @@ int N;
 int M;
 
 int Map[501][501];
-set<int> sichu[501];
 int visited[501][501];
 
 int dirX[4]{1,-1,0,0};
