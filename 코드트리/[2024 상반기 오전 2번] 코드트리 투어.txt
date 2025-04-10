@@ -1,0 +1,263 @@
+#include <iostream>
+#include <queue>
+#include <vector>
+#include <tuple>
+
+using namespace std;
+
+struct packageInfo {
+    int id, revenue, dest, cost;
+};
+
+struct Cmp2 {
+    bool operator()(packageInfo a, packageInfo b) {
+        if (a.cost != b.cost)return a.cost < b.cost;
+        return a.id > b.id;
+    }
+};
+
+vector<pair<int,int>> place[2001];
+int N;
+int costs[2001];
+priority_queue<packageInfo,vector<packageInfo>,Cmp2> product;
+bool checkId[30001];
+int depart = 0;
+const int INF = 987654321;
+
+// struct cmp
+// {
+//     bool operator()(pair<int,pair<int,int>>& A, pair<int,pair<int,int>>& B)
+//     {
+//         if(A)
+//     }
+// }
+
+void makeLand()
+{
+    int m;
+    cin >> N >> m;            
+
+    for(int i = 0 ; i < m ; ++i)
+    {
+        int a;
+        int b;
+        int w;
+        cin >> a >> b >> w;
+
+        place[a].push_back({b,w});
+        place[b].push_back({a,w});
+    }
+}
+
+void calcuCost()
+{    
+    for(int i = 0 ; i < N ; ++i)
+    {
+        if(i == depart)
+        {
+            costs[i] = 0;
+            continue;
+        }
+        costs[i] = INF;
+    }
+    
+    priority_queue<pair<int,int>> Q;
+    Q.push({depart,0});
+    
+    while(!Q.empty())
+    {
+        int cur = Q.top().first;
+        int cost = Q.top().second;
+        Q.pop();
+
+        if(costs[cur] < cost) continue;
+
+        for(int i = 0 ; i < place[cur].size() ; ++i)
+        {
+            int next = place[cur][i].first;
+            int nCost = place[cur][i].second;
+
+            if(costs[next] > cost + nCost)
+            {
+                costs[next] = cost +nCost;
+                Q.push({next, costs[next]});
+            }
+            
+        }
+    }
+
+    // for(int i = 0 ; i < N ; ++i)
+    // {
+    //     cout << costs[i]<< " ";
+    // }
+    // cout <<endl;
+}
+
+void makeProduct()
+{
+    int id;
+    int rev;
+    int des;
+    int cost{};
+    cin >> id >> rev >> des;
+
+    if (costs[des] == INF) {
+        cost = -1;
+    }
+    else {
+        cost = rev - costs[des];
+    }
+
+    product.push({ id,rev,des,cost });
+    checkId[id] = true;
+}
+
+void eraseProduct()
+{
+    int id;
+    cin >> id;
+
+    checkId[id] = false;
+}
+
+void showProduct()
+{
+//     int id = INF;
+//     int gain = -1;
+//     //cout << "product : " << product.size() <<endl;
+//     for(auto& m : product)
+//     {
+//         int rev = m.second.first;
+//         int cost = costs[m.second.second];
+
+//         //cout <<"cost : " << cost <<endl;
+//         if(cost == INF) continue;
+//         if(rev - cost < 0) continue;
+
+//         if(gain < rev - cost)
+//         {
+//             gain = rev - cost;
+//             id = m.first;
+//         }
+//         else if(gain == rev-cost)
+//         {
+//             if(id > m.first)
+//             {
+//                 gain = rev-cost;
+//                 id = m.first;
+//             }
+//         }
+//     }
+
+//     if(id != INF)
+//     {
+//         cout << id <<endl;
+//         //cout << "before : " << product.size() <<endl;   
+//         product.erase(id);
+//         //cout << "after : " << product.size() <<endl;
+//     }
+//     else
+//         cout << -1 <<endl;
+
+    if (product.empty()) {
+        cout << -1 << "\n";
+        return;
+    }
+    else {
+        while (!product.empty()) {
+            packageInfo now = product.top();
+            if (!checkId[now.id]) {
+                product.pop();
+            }
+            else {
+                break;
+            }
+        }
+        if (product.empty()) {
+            cout << -1 << "\n";
+            return;
+        }
+        packageInfo now = product.top();
+        if (now.cost < 0) {
+            cout << -1 << "\n";
+        }
+        else {
+            product.pop();
+            checkId[now.id] = false;
+            cout << now.id<<"\n";
+        }
+    }
+}
+
+
+void changeStart()
+{
+    int n;
+    cin >> n;
+    depart = n;
+
+    calcuCost();
+    
+    priority_queue<packageInfo, vector<packageInfo>, Cmp2>temp;
+    while (!product.empty()) {
+        packageInfo now = product.top();
+        product.pop();
+        if (!checkId[now.id])continue;
+        temp.push(now);
+    }
+
+    while (!temp.empty()) {
+        packageInfo now = temp.top();
+        int cost = 0;
+        int dest = now.dest;
+        int revenue = now.revenue;
+        if (costs[dest] == INF) {
+            cost = -1;
+        }
+        else {
+            cost = revenue - costs[dest];
+        }
+        now.cost = cost;
+        product.push(now);
+        temp.pop();
+    }
+}
+
+int main() {
+    // Please write your code here.
+
+    int T;
+    cin >> T;
+
+    for(int t = 0 ; t < T ; ++t)
+    {
+        int command;
+        cin >> command;
+        
+        switch(command)
+        {
+            case 100:
+                makeLand();
+                calcuCost();
+                break;
+
+            case 200:
+                makeProduct();
+                break;
+
+            case 300:
+                eraseProduct();
+                break;
+
+            case 400:
+                showProduct();
+                break;
+
+            case 500:
+                changeStart();
+                break;
+        }
+    }
+
+    return 0;
+}
