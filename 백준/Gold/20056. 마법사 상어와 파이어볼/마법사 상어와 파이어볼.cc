@@ -15,12 +15,28 @@
 
 using namespace std;
 
-struct FireBall {
+class FireBall
+{
+public:
 	int r;
 	int c;
-	int m;
+	int mat;
 	int speed;
 	int dir;
+
+	FireBall(int r, int c, int m, int s, int d) : r(r), c(c), mat(m), speed(s), dir(d)
+	{}
+};
+
+class Ball
+{
+public:
+	int mat;
+	int speed;
+	int dir;
+	int cnt;
+	int odd;
+	int even;
 };
 
 int N;
@@ -28,24 +44,21 @@ int M;
 int K;
 
 vector<FireBall> fireBalls;
-vector<FireBall> field[51][51];
+Ball field[51][51];
 
 int dX[]{ -1,-1,0,1,1,1,0,-1 };
 int dY[]{ 0,1,1,1,0,-1,-1,-1 };
 
+int mergeX[]{ 1,0,-1,0 };
+int mergeY[]{ 0,1,0,-1 };
+
 void moveBall()
 {
-	for (int i = 1; i <= N; ++i)
-		for (int j = 1; j <= N; ++j)
-			field[i][j].clear();
-
 	for (int i = 0; i < fireBalls.size(); ++i)
 	{
 		int x = fireBalls[i].r;
 		int y = fireBalls[i].c;
-		int m = fireBalls[i].m;
 		int speed = fireBalls[i].speed;
-		int dir = fireBalls[i].dir;
 
 		int move = speed % N;
 		int nx = x + dX[fireBalls[i].dir] * move;
@@ -58,64 +71,81 @@ void moveBall()
 		if (ny <= 0) ny += N;
 		if (ny > N) ny -= N;
 
-		field[nx][ny].push_back({ nx,ny,m,speed,dir });
 
 		fireBalls[i].r = nx;
 		fireBalls[i].c = ny;
 	}
 }
 
-void divideBall()
+void reset()
 {
-	vector<FireBall> temp;
-
 	for (int i = 1; i <= N; ++i)
 	{
 		for (int j = 1; j <= N; ++j)
 		{
-			if (field[i][j].size() == 0) continue;
+			field[i][j].mat = 0;
+			field[i][j].speed = 0;
+			field[i][j].dir = 0;
+			field[i][j].cnt = 0;
+			field[i][j].odd = 0;
+			field[i][j].even = 0;
+		}
+	}
+}
 
-			if (field[i][j].size() == 1)
+void mergeBall()
+{
+	reset();
+
+	for (int i = 0; i < fireBalls.size(); ++i)
+	{
+		int x = fireBalls[i].r;
+		int y = fireBalls[i].c;
+
+		field[x][y].mat += fireBalls[i].mat;
+		field[x][y].speed += fireBalls[i].speed;
+		field[x][y].dir += fireBalls[i].dir;
+		++field[x][y].cnt;
+
+		if (fireBalls[i].dir % 2 == 0)
+			++field[x][y].even;
+		else
+			++field[x][y].odd;
+	}
+
+	fireBalls.clear();
+}
+
+void divideBall()
+{
+	for (int i = 1; i <= N; ++i)
+	{
+		for (int j = 1; j <= N; ++j)
+		{
+			if (field[i][j].cnt == 0) continue;
+
+			if (field[i][j].cnt == 1)
 			{
-				temp.push_back(field[i][j][0]);
+				fireBalls.push_back(FireBall{ i,j,field[i][j].mat,field[i][j].speed,field[i][j].dir });
 				continue;
 			}
 
-			int nm = 0;
-			int ns = 0;
-			int cnt = field[i][j].size();
+			int nm = floor((double)field[i][j].mat / 5.0);
+			if (nm <= 0) continue;
 
-			bool even = true;
-			bool odd = true;
+			int ns = floor((double)field[i][j].speed / (double)field[i][j].cnt);
 
-			for (int k = 0; k < field[i][j].size(); ++k)
+			for (int k = 0; k < 4; ++k)
 			{
-				nm += field[i][j][k].m;
-				ns += field[i][j][k].speed;
-
-				if (field[i][j][k].dir % 2 == 0)
-					odd = false;
+				if (field[i][j].cnt == field[i][j].odd)
+					fireBalls.push_back(FireBall{ i,j,nm,ns,k * 2 });
+				else if (field[i][j].cnt == field[i][j].even)
+					fireBalls.push_back(FireBall{ i,j,nm,ns,k * 2 });
 				else
-					even = false;
-			}
-
-			int m = nm / 5;
-			int speed = ns / cnt;
-			if (m == 0) continue;
-			if (even || odd)
-			{
-				for (int k = 0; k < 4; ++k)
-					temp.push_back({ i,j,m,speed,k * 2 });
-			}
-			else
-			{
-				for (int k = 0; k < 4; ++k)
-					temp.push_back({ i,j,m,speed,(k * 2) + 1 });
+					fireBalls.push_back(FireBall{ i,j,nm,ns,(k * 2) + 1 });
 			}
 		}
 	}
-
-	fireBalls = temp;
 }
 
 int main(void)
@@ -135,19 +165,20 @@ int main(void)
 		int d;
 		cin >> r >> c >> m >> s >> d;
 
-		fireBalls.push_back({ r,c,m,s,d });
-		field[r][c].push_back({ r,c,m,s,d });
+		fireBalls.push_back(FireBall{ r,c,m,s,d });
 	}
 
 	for (int i = 0; i < K; ++i)
 	{
 		moveBall();
+		mergeBall();
 		divideBall();
+
 	}
 
 	int answer{};
 	for (int i = 0; i < fireBalls.size(); ++i)
-		answer += fireBalls[i].m;
+		answer += fireBalls[i].mat;
 
 	cout << answer;
 
