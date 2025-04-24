@@ -14,23 +14,21 @@ int main(void)
 	int N;
 	cin >> N;
 
-	vector<int> nums(N);
-
-	for (int i = 0; i < N; ++i)
-		cin >> nums[i];
-
 	int answer{};
 	for (int i = 0; i < N; ++i)
 	{
-		if (arrow[nums[i]] == 0)
+		int n;
+		cin >> n;
+
+		if (arrow[n] == 0)
 		{
-			++arrow[nums[i] - 1];
+			++arrow[n - 1];
 			++answer;
 			continue;
 		}
 
-		--arrow[nums[i]];
-		++arrow[nums[i] - 1];
+		--arrow[n];
+		++arrow[n - 1];
 	}
 
 	cout << answer;
