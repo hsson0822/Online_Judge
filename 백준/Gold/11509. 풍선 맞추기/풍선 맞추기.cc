@@ -1,17 +1,5 @@
 #include <iostream>
-#include <map>
-#include <unordered_map>
 #include <vector>
-#include <algorithm>
-#include <string>
-#include <set>
-#include <deque>
-#include <stack>
-#include <queue>
-#include <sstream>
-#include <climits>
-#include <math.h>
-#include <cstring>
 
 using namespace std;
 
