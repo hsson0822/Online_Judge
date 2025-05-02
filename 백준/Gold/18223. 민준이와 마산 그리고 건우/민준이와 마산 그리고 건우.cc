@@ -36,11 +36,7 @@ void dijkstra()
 {
 	queue<Pos> PQ;
 	costs[1] = 0;
-
-	if(P == 1)
-		PQ.push(Pos{ 1,0,true });
-	else
-		PQ.push(Pos{ 1,0,false });
+	PQ.push(Pos{ 1,0,false });
 
 	while (!PQ.empty())
 	{
@@ -51,7 +47,7 @@ void dijkstra()
 
 		if (cur == V)
 		{
-		
+
 			if (check.first > cost)
 			{
 				check.first = cost;
@@ -99,7 +95,7 @@ int main(void)
 		int w;
 		cin >> a >> b >> w;
 		road[a].push_back({ b,w });
-		road[b].push_back({ a,w });
+        road[b].push_back({ a,w });
 	}
 
 	fill_n(costs, V + 1, INF);
