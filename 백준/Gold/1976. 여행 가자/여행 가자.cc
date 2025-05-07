@@ -24,7 +24,6 @@ queue<int> travel;
 bool dfs(int start, int to)
 {
 	bool visited[201]{ false };
-	//memset(visited, false, sizeof(visited));
 	queue<int> Q;
 	visited[start] = true;
 	Q.push(start);
@@ -33,7 +32,7 @@ bool dfs(int start, int to)
 	{
 		int now = Q.front();
 		Q.pop();
-		
+
 		if (now == to)
 			return true;
 
@@ -88,7 +87,6 @@ int main(void)
 		if (travel.empty())
 			break;
 
-		//cout << start << " -> " << travel.front() << endl;
 		if (!dfs(start, travel.front()))
 		{
 			cout << "NO";
