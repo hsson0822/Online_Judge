@@ -1,88 +1,133 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <map>
+#include <unordered_map>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <set>
+#include <deque>
+#include <stack>
+#include <queue>
+#include <sstream>
+#include <climits>
+#include <math.h>
+#include <cstring>
+
 using namespace std;
 
-char MAP[51][51];
-int cache[51][51];
-int dx[4] = {0, 1, 0, -1};
-int dy[4] = {1, 0, -1, 0};
-int R, C;
-pair<int, int> sPos, dPos;
+int R;
+int C;
+char forrest[51][51];
+
+int dx[]{ 1,0,-1,0 };
+int dy[]{ 0,1,0,-1 };
+
+int DX;
+int DY;
+
+int SX;
+int SY;
 queue<pair<int, int>> water;
+int cache[51][51];
 
-void BFS() {
-    queue<pair<int, int> > hedgehog;
-    hedgehog.push(sPos);
-    cache[sPos.first][sPos.second] = 1;
 
-    while(!hedgehog.empty()) {
-        int waterSize = water.size();
-        // 물을 먼저 확장 시킨 후
-        for(int k = 0; k < waterSize; k++) {
-            int nowX = water.front().first;
-            int nowY = water.front().second;
-            water.pop();
+int bfs()
+{
+	queue<pair<int, int>> hedge;
+	hedge.push({ SX,SY });
+	cache[SX][SY] = 1;
 
-            for (int i = 0; i < 4; i++) {
-                int nextX = nowX + dx[i];
-                int nextY = nowY + dy[i];
+	while (!hedge.empty())
+	{
+		int size = water.size();
+		for (int i = 0; i < size; ++i)
+		{
+			int x = water.front().first;
+			int y = water.front().second;
+			water.pop();
 
-                if (nextX < 0 || nextY < 0 || nextX >= R || nextY >= C) continue;
-                if (MAP[nextX][nextY] == '.') {
-                    MAP[nextX][nextY] = '*';
-                    water.push({nextX, nextY});
-                }
-            }
-        }
-        // 고슴도치 이동
-        int hSize = hedgehog.size();
+			for (int j = 0; j < 4; ++j)
+			{
+				int nx = x + dx[j];
+				int ny = y + dy[j];
 
-        for(int k = 0; k < hSize; k++) {
-            int nowX = hedgehog.front().first;
-            int nowY = hedgehog.front().second;
-            hedgehog.pop();
+				if (nx <= 0 || ny <= 0 || nx > R || ny > C) continue;
+				if (forrest[nx][ny] == '.')
+				{
+					forrest[nx][ny] = '*';
+					water.push({ nx,ny });
+				}
+			}
+		}
 
-            if (nowX == dPos.first && nowY == dPos.second) {
-                cout << cache[nowX][nowY] - 1;
-                exit(0);
-            }
+		int k = hedge.size();
 
-            for(int i = 0; i < 4; i++) {
-                int nextX = nowX + dx[i];
-                int nextY = nowY + dy[i];
-                if (nextX < 0 || nextY < 0 || nextX >= R || nextY >= C) continue;
+		for (int i = 0; i < k; ++i)
+		{
+			int x = hedge.front().first;
+			int y = hedge.front().second;
+			hedge.pop();
 
-                if(MAP[nextX][nextY] != '*' && cache[nextX][nextY] == 0 && MAP[nextX][nextY] != 'X') {
-                    cache[nextX][nextY] = cache[nowX][nowY] + 1;
-                    hedgehog.push({nextX, nextY});
-                }
-            }
-        }
-    }
+			if (x == DX && y == DY)
+			{
+				return cache[x][y] - 1;
+			}
+
+			for (int j = 0; j < 4; ++j)
+			{
+				int nx = x + dx[j];
+				int ny = y + dy[j];
+
+				if (nx <= 0 || ny <= 0 || nx > R || ny > C) continue;
+
+				if ((forrest[nx][ny] == '.' || forrest[nx][ny] == 'D') && cache[nx][ny] == 0 )
+				{
+					cache[nx][ny] = cache[x][y] + 1;
+					hedge.push({ nx,ny });
+				}
+			}
+		}
+	}
+
+	return -1;
 }
 
-int main() {
-    ios_base::sync_with_stdio(0);
-    cin.tie(0);
+int main(void)
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
 
-    cin >> R >> C;
+	cin >> R >> C;
 
-    for(int i = 0; i < R; i++) {
-        for(int j = 0; j < C; j++) {
-            cin >> MAP[i][j];
-            if(MAP[i][j] == 'S') {
-                sPos.first = i;
-                sPos.second = j;
-            }else if(MAP[i][j] == 'D') {
-                dPos.first = i;
-                dPos.second = j;
-            }else if(MAP[i][j] == '*') {
-                water.push({i, j});
-            }
-        }
-    }
+	for (int i = 1; i <= R; ++i)
+	{
+		for (int j = 1; j <= C; ++j)
+		{
+			cin >> forrest[i][j];
 
-    BFS();
-    cout << "KAKTUS" << endl;
+			if (forrest[i][j] == 'D')
+			{
+				DX = i;
+				DY = j;
+			}
+			else if (forrest[i][j] == 'S')
+			{
+				SX = i;
+				SY = j;
+			}
+			else if (forrest[i][j] == '*')
+				water.push({ i,j });
 
-    return 0;
+		}
+	}
+	
+	int result = bfs();
+	if (result == -1)
+		cout << "KAKTUS";
+	else
+		cout << result;
+
+
+	return 0;
 }
