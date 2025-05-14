@@ -30,7 +30,7 @@ struct cmp
 		if (A.second == B.second)
 			return A.first > B.first;
 
-		return A.second < B.second;
+		return A.second > B.second;
 	}
 };
 
@@ -109,37 +109,17 @@ int main(void)
 		peon.push(a);
 	}
 
-	//priority_queue<pair<int, int>, vector<pair<int, int>>, cmp> PQ;
+	priority_queue<pair<int, int>, vector<pair<int, int>>, cmp> PQ;
 	dijkstra();
 
 	/*for (int i = 1; i <= N; ++i)
 		cout << costs[i] << " ";
 	cout << endl;*/
 
-	/*for (int i = 0; i < P; ++i)
-	{
-		PQ.push({ house[i], costs[house[i]] });
-	}*/
-
-	int houseNum{};
-	int len = INT_MAX;
-
 	for (int i = 0; i < P; ++i)
 	{
-		int h = house[i];
-
-		if (len > costs[h])
-		{
-			houseNum = h;
-			len = costs[h];
-		}
-		else if (len == costs[h])
-		{
-			if (houseNum > h)
-				houseNum = h;
-		}
+		PQ.push({ house[i], costs[house[i]] });
 	}
-	cout << houseNum;
 
 	/*while (!PQ.empty())
 	{
@@ -150,7 +130,7 @@ int main(void)
 		cout << cur << " : " << cost << endl;
 	}*/
 
-	//cout << PQ.top().first;
+	cout << PQ.top().first;
 
 	return 0;
 }
