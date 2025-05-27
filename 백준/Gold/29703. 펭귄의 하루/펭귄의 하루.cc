@@ -50,7 +50,7 @@ void findFood()
 		{
 			int nx = x + dx[i];
 			int ny = y + dy[i];
-			int nc = c + 1;
+            int nc = c + 1;
 
 			if (nx <= 0 || ny <= 0 || nx > N || ny > M) continue;
 			if (village[nx][ny] == 'D') continue;
@@ -58,15 +58,17 @@ void findFood()
 			if (Fcost[nx][ny] > nc)
 			{
 				Fcost[nx][ny] = nc;
-				Q.push({ nx,ny,nc });
-			}
+				
+				
+					Q.push({ nx,ny,nc});
+			}	
 		}
 	}
 }
 
 void findHome()
 {
-	queue<tuple<int, int, int>> Q;
+	queue<tuple<int,int,int>> Q;
 	Q.push({ HX,HY,0 });
 	Hcost[HX][HY] = 0;
 
@@ -83,7 +85,7 @@ void findHome()
 		{
 			int nx = x + dx[i];
 			int ny = y + dy[i];
-			int nc = c + 1;
+            int nc = c + 1;
 
 			if (nx <= 0 || ny <= 0 || nx > N || ny > M) continue;
 			if (village[nx][ny] == 'D') continue;
@@ -91,7 +93,9 @@ void findHome()
 			if (Hcost[nx][ny] > nc)
 			{
 				Hcost[nx][ny] = nc;
-				Q.push({ nx,ny,nc });
+
+				
+					Q.push({ nx,ny,nc});
 			}
 		}
 	}
@@ -103,7 +107,7 @@ int main(void)
 	cin.tie(0);
 	cout.tie(0);
 
-	cin >> N >> M;
+	cin >> N >>M;
 
 	for (int i = 1; i <= N; ++i)
 	{
@@ -124,12 +128,9 @@ int main(void)
 		}
 	}
 
-	for (int i = 0; i <= N; i++) {
-		for (int j = 0; j <= M; j++) {
-			Fcost[i][j] = INF;
-			Hcost[i][j] = INF;
-		}
-	}
+	fill(&Fcost[0][0], &Fcost[N][M + 1], INF);
+	fill(&Hcost[0][0], &Hcost[N][M + 1], INF);
+
 	findFood();
 	findHome();
 
