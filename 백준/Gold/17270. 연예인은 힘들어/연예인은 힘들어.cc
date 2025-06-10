@@ -1,88 +1,105 @@
-#define _CRT_SECURE_NO_WARNINGS
-#include <cstring>
-#include <vector>
 #include <iostream>
+#include <map>
+#include <unordered_map>
+#include <vector>
 #include <algorithm>
-#include <queue>
-#include <cmath>
-#include <cstdio>
 #include <string>
-#define INF 2100000000
-#define F first
-#define S second
+#include <set>
+#include <deque>
+#include <stack>
+#include <queue>
+#include <sstream>
+#include <climits>
+#include <math.h>
+#include <cstring>
 
 using namespace std;
 
-int N, M;
-int J, S;
-vector<pair<int, int>> connect[101];
-priority_queue<pair<int, int>, vector<pair<int, int>>> q;
-int Distance[101];
-int J_Distance[101]; //J -> X를 저장
-int S_Distance[101]; //S -> X를 저장
+int V;
+int M;
+vector<pair<int, int>> graph[101];
+const int INF = INT_MAX;
 
-void reset_distance(){
-	for(int i = 1; i <= N; i++) Distance[i] = INF;
-}
+void dijkstra(int start, int costs[])
+{
+	priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> PQ;
+	PQ.push({ 0, start });
+	costs[start] = 0;
 
-void Dijstra(int st){
-	reset_distance();
-	Distance[st] = 0;
-	q.push({-Distance[st], st});
-	while(!q.empty()){
-		int x = q.top().S;
-		int cost = -q.top().F;
-		q.pop();
-		if(Distance[x] < cost) continue;
-		for(int i = 0; i < connect[x].size(); i++){
-			int xx = connect[x][i].F;
-			int n_cost = cost + connect[x][i].S;
-			if(Distance[xx] > n_cost){
-				Distance[xx] = n_cost;
-				q.push({-Distance[xx], xx});
+	while (!PQ.empty())
+	{
+		int cost = PQ.top().first;
+		int cur = PQ.top().second;
+		PQ.pop();
+
+		if (costs[cur] < cost) continue;
+
+		for (int i = 0; i < graph[cur].size(); ++i)
+		{
+			int next = graph[cur][i].first;
+			int nCost = graph[cur][i].second;
+
+			if (costs[next] > cost + nCost)
+			{
+				costs[next] = cost + nCost;
+				PQ.push({ costs[next],next});
 			}
 		}
 	}
 }
 
-void solve(){
-	int JS_distance = INF;
-	int Point = -1, J_dis = INF;
-	Dijstra(J); // 지헌이부터 출발해 다른 지점까지 걸리는 비용
-	for(int i = 1; i <= N; i++){
-		J_Distance[i] = Distance[i]; //지헌이를 기준으로 한 값 저장
-	}
-	Dijstra(S); // 성하부터 출발해 다른 지점까지 걸리는 비용
-	for(int i = 1; i <= N; i++){
-		S_Distance[i] = Distance[i]; //성하를 기준으로 한 값 저장
-	}
-	for(int i = 1; i <= N; i++){
-		if(i == J || i == S) continue;
-		JS_distance = min(JS_distance, J_Distance[i] + S_Distance[i]); // 최소거리를 저장
-	}
-	for(int i = N; i >= 1; i--){
-		if(i == J || i == S) continue;
-		if(JS_distance != J_Distance[i] + S_Distance[i]) continue;
-		if(J_Distance[i] > S_Distance[i]) continue;
-		if(J_dis >= J_Distance[i]){
-			J_dis = J_Distance[i];
-			Point = i;
-		}
-	}
-	cout << Point;
-}
-
-int main() {
+int main(void)
+{
+	ios_base::sync_with_stdio(false);
 	cin.tie(0);
 	cout.tie(0);
-	cin >> N >> M;
-	for(int i = 1; i <= M; i++){
-		int x, y, cost;
-		cin >> x >> y >> cost;
-		connect[x].push_back({y, cost});
-		connect[y].push_back({x, cost});
+
+	cin >> V >> M;
+
+	for (int i = 0; i < M; ++i)
+	{
+		int a, b, w;
+		cin >> a >> b >> w;
+
+		graph[a].push_back({ b,w });
+		graph[b].push_back({ a,w });
 	}
-	cin >> J >> S;
-	solve();
+
+	int j, s;
+	cin >> j >> s;
+
+	int jiCost[101];
+	int sungCost[101];
+
+	fill_n(jiCost, V + 1, INF);
+	fill_n(sungCost, V + 1, INF);
+
+	dijkstra(j, jiCost);
+	dijkstra(s, sungCost);
+
+	int JS_distance = INF;
+	int cost = INF;
+	int answer = -1;
+
+	for (int i = 1; i <= V; i++) {
+		if (i == j || i == s) continue;
+		JS_distance = min(JS_distance, jiCost[i] + sungCost[i]); // 최소거리를 저장
+	}
+
+	for (int i = V; i >= 1; --i)
+	{
+		if (i == s || i == j) continue;
+		if (JS_distance != jiCost[i] + sungCost[i]) continue;
+		if (jiCost[i] > sungCost[i]) continue;
+
+		if (cost >= jiCost[i])
+		{
+			cost = jiCost[i];
+			answer = i;
+		}
+	}
+
+	cout << answer;
+
 	return 0;
 }
