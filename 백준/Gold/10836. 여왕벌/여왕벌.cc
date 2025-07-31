@@ -31,28 +31,45 @@ int main(void)
 
 	for (int n = 0; n < N; ++n)
 	{
-		fill(&grow[0][0], &grow[M][M], 0);
-
 		int zero, one, two;
 		cin >> zero >> one >> two;
-		queue<int> Q;
-		for (int i = 0; i < zero; ++i)
-			Q.push(0);
-		for (int i = 0; i < one; ++i)
-			Q.push(1);
-		for (int i = 0; i < two; ++i)
-			Q.push(2);
 
 		for (int i = M - 1; i >= 0; --i)
 		{
-			bee[i][0] += Q.front();
-			Q.pop();
+			if (zero > 0)
+			{
+				bee[i][0] += 0;
+				--zero;
+			}
+			else if (one > 0)
+			{
+				bee[i][0] += 1;
+				--one;
+			}
+			else if (two > 0)
+			{
+				bee[i][0] += 2;
+				--two;
+			}
 		}
 
 		for (int i = 1; i < M; ++i)
 		{
-			bee[0][i] += Q.front();
-			Q.pop();
+			if (zero > 0)
+			{
+				bee[0][i] += 0;
+				--zero;
+			}
+			else if (one > 0)
+			{
+				bee[0][i] += 1;
+				--one;
+			}
+			else if (two > 0)
+			{
+				bee[0][i] += 2;
+				--two;
+			}
 		}
 	}
 	for (int i = 1; i < M; ++i)
@@ -62,14 +79,14 @@ int main(void)
 			bee[i][j] = max({bee[i - 1][j], bee[i][j - 1], bee[i - 1][j - 1]});
 		}
 	}
-	
+
 	for (int i = 0; i < M; ++i)
 	{
 		for (int j = 0; j < M; ++j)
 		{
 			cout << bee[i][j] << " ";
 		}
-		cout << endl;
+		cout << "\n";
 	}
 
 	return 0;
