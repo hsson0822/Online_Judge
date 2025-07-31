@@ -45,33 +45,24 @@ int main(void)
 
 		for (int i = M - 1; i >= 0; --i)
 		{
-			grow[i][0] += Q.front();
+			bee[i][0] += Q.front();
 			Q.pop();
 		}
 
 		for (int i = 1; i < M; ++i)
 		{
-			grow[0][i] += Q.front();
+			bee[0][i] += Q.front();
 			Q.pop();
-		}
-
-		for (int i = 1; i < M; ++i)
-		{
-			for (int j = 1; j < M; ++j)
-			{
-				grow[i][j] = max({grow[i - 1][j], grow[i][j - 1], grow[i - 1][j - 1]});
-			}
-		}
-
-		for (int i = 0; i < M; ++i)
-		{
-			for (int j = 0; j < M; ++j)
-			{
-				bee[i][j] += grow[i][j];
-			}
 		}
 	}
-
+	for (int i = 1; i < M; ++i)
+	{
+		for (int j = 1; j < M; ++j)
+		{
+			bee[i][j] = max({bee[i - 1][j], bee[i][j - 1], bee[i - 1][j - 1]});
+		}
+	}
+	
 	for (int i = 0; i < M; ++i)
 	{
 		for (int j = 0; j < M; ++j)
