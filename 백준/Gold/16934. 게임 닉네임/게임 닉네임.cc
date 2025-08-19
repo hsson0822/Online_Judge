@@ -23,7 +23,8 @@ int charToInt(char ch) {
 
 struct TrieNode
 {
-	struct TrieNode *children[AlphaNum];
+	//struct TrieNode *children[AlphaNum];
+	map<char,struct TrieNode*> children;
 	int cnt;
 
 	TrieNode() : children(), cnt(0) {}
